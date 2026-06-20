@@ -1,0 +1,12 @@
+{
+  "name": "skyblock-pv-profile",
+  "version": "1.0.0",
+  "description": "Skyblock ProfileViewer backend (AWS Lambda). Networth via skyhelper-networth.",
+  "type": "module",
+  "main": "index.mjs",
+  "dependencies": {
+    "skyhelper-networth": "^2.7.5",
+    "@aws-sdk/client-dynamodb": "^3.600.0",
+    "@aws-sdk/lib-dynamodb": "^3.600.0"
+  }
+}

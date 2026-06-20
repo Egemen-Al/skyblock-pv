@@ -1,0 +1,31 @@
+# --- Gradle / build ---
+.gradle/
+build/
+out/
+
+# --- Fabric/Minecraft dev run dir ---
+run/
+
+# --- IDE ---
+.idea/
+*.iml
+.vscode/
+
+# --- Dev araclari (otomatik inilebilir) ---
+libs/
+
+# --- Backend (AWS Lambda) bagimliliklari ve paketler ---
+node_modules/
+*.zip
+
+# --- Eski proje kopyasi / test verisi ---
+pv-work/
+
+# --- Loglar / gecici ---
+*.log
+*.log.gz
+test_key.py
+
+# --- OS ---
+.DS_Store
+Thumbs.db

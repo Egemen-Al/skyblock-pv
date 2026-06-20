@@ -1,0 +1,26 @@
+{
+	"schemaVersion": 1,
+	"id": "skyblockpv",
+	"version": "${version}",
+	"name": "Skyblock ProfileViewer",
+	"description": "A standalone port of NotEnoughUpdates' ProfileViewer GUI for Minecraft 1.21.10. Based on NotEnoughUpdates (LGPL-3.0).",
+	"authors": [
+		"Port author",
+		"NotEnoughUpdates contributors (original)"
+	],
+	"contact": {},
+	"license": "LGPL-3.0-or-later",
+	"icon": "assets/skyblockpv/textures/gui/pv_unknown.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": [
+			"com.example.pv.SkyblockPvClient"
+		]
+	},
+	"depends": {
+		"fabricloader": ">=0.18.0",
+		"minecraft": "~1.21.10",
+		"java": ">=21",
+		"fabric-api": "*"
+	}
+}
