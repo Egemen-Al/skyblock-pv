@@ -1,13 +1,9 @@
-// Networth hesabi SkyHelper-Networth ile yapilir (SkyCrypt'in kullandigi kutuphane).
-// Lambda paketine dahil edilmeli:  npm install skyhelper-networth
-// (node_modules ile birlikte zip'leyip yukle, ya da Lambda Layer kullan.)
-
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 export const handler = async (event) => {
     try {
-        // /users komutu: tum kullanici aktivitesini DynamoDB ozetinden getir.
+
         if ((event.queryStringParameters?.command || "") === "users") {
             const summary = await getUsersSummary(2000).catch(e => ({ error: String(e) }));
             return json(200, { success: true, ...summary });
@@ -31,7 +27,6 @@ export const handler = async (event) => {
             });
         }
 
-        // Istek yapan oyuncu (mod gonderir) + Discord webhook log (spam takibi).
         const requester = (event.queryStringParameters?.requester || "?").toString().trim().slice(0, 32) || "?";
         await withTimeout(Promise.all([
             logToDiscord(requester, username).catch(() => {}),
@@ -70,11 +65,9 @@ export const handler = async (event) => {
         const profilesJson = await profilesRes.json();
         const statusJson = await statusRes.json().catch(() => ({ success: false }));
 
-        // --- Collection tier eşikleri (resources, key gerektirmez) ---
         const colResJson = await colResRes.json().catch(() => ({}));
         const collectionsResource = colResJson.collections || {};
 
-        // --- Skin textures (Mojang session server) ---
         const skinJson = await skinRes.json().catch(() => ({}));
         const texProp = (skinJson.properties || []).find(p => p.name === "textures") || {};
         const skin_value = texProp.value || "";
@@ -99,9 +92,6 @@ export const handler = async (event) => {
         const player = playerJson.player || {};
         const profiles = profilesJson.profiles || [];
 
-        // --- Online durumu ---
-        // 1) /status endpoint'i en güveniliridir (online + bulunduğu oyun/mod).
-        // 2) Olmazsa lastLogin > lastLogout ise online kabul edilir.
         let online = false;
         let gameType = null;
         let mode = null;
@@ -118,9 +108,6 @@ export const handler = async (event) => {
             const inv = member.inventory || member;
             const dungeons = member.dungeons || {};
 
-            // Collections: resource eşikleriyle her collection için tier hesabı.
-            // Collections coop geneli: tum uyelerin collection sayilarini topla
-            // (in-game/SkyCrypt davranisi; coop uyesi az toplamis olsa bile dogru gozuksun).
             const memberCol = {};
             for (const cm of Object.values(profile.members || {})) {
                 for (const [cid, camt] of Object.entries(cm.collection || {})) {
@@ -143,7 +130,6 @@ export const handler = async (event) => {
             const master = dungeons.dungeon_types?.master_catacombs || {};
             const playerClasses = dungeons.player_classes || {};
 
-            // Floor completion sayıları + en iyi süreler (normal + master).
             const floorData = (dt) => {
                 const tiers = dt.tier_completions || {};
                 const fastest = dt.fastest_time || {};
@@ -173,7 +159,7 @@ export const handler = async (event) => {
                 bank: profile.banking?.balance || 0,
                 skyblock_level_xp: member.leveling?.experience || 0,
                 fairy_souls: member.fairy_soul?.total_collected || 0,
-                // Ham base64+gzip NBT - client tarafında decode edilecek.
+
                 inventory: {
                     inv_contents: inv.inv_contents?.data || null,
                     ender_chest: inv.ender_chest_contents?.data || null,
@@ -193,8 +179,7 @@ export const handler = async (event) => {
                     highest_magical_power: member.accessory_bag_storage?.highest_magical_power || 0
                 },
                 collections: collections,
-                // Minionlar coop genelinde paylasimli: profildeki TUM uyelerin
-                // crafted_generators listelerini birlestir (SkyCrypt / in-game davranisi).
+
                 crafted_generators: (() => {
                     const set = new Set();
                     for (const m of Object.values(profile.members || {})) {
@@ -257,7 +242,7 @@ export const handler = async (event) => {
                     for (const [k, v] of Object.entries(mc.crystals || {})) {
                         crystals[k.replace("_crystal", "")] = { state: v.state || "NOT_FOUND", total_placed: v.total_placed || 0 };
                     }
-                    // Nucleus runs = 5 nucleus kristalinin min total_placed'i
+
                     let nucleusRuns = Infinity;
                     for (const nk of ["jade", "amber", "topaz", "sapphire", "amethyst"]) {
                         nucleusRuns = Math.min(nucleusRuns, mc.crystals?.[nk + "_crystal"]?.total_placed || 0);
@@ -320,10 +305,9 @@ export const handler = async (event) => {
                 dungeons: {
                     catacombs_xp: cata.experience || 0,
                     master_catacombs_xp: master.experience || 0,
-                    // SkyCrypt ile ayni: profil bazli secrets (member.dungeons.secrets)
+
                     secrets_found: dungeons.secrets || 0,
-                    // SkyCrypt S/R paydasi: TUM tier_completions (giris kati 0 dahil,
-                    // normal + master, "total" anahtari haric, master 2'yle CARPILMADAN).
+
                     secrets_per_run: (() => {
                         const sumTiers = (dt) => Object.entries(dt.tier_completions || {})
                             .filter(([k, v]) => k !== "total" && v > 0)
@@ -341,7 +325,7 @@ export const handler = async (event) => {
                     selected_class: dungeons.selected_dungeon_class || null,
                     floors: floorData(cata),
                     master_floors: floorData(master),
-                    // Boss collections = floor tier completions (M1-M7 / F1-F7)
+
                     boss_collections: {
                         f0: cata.tier_completions?.[0] || 0,
                         f1: cata.tier_completions?.[1] || 0,
@@ -367,8 +351,6 @@ export const handler = async (event) => {
 
         summaries.sort((a, b) => b.last_save - a.last_save);
 
-        // Networth: SkyHelper-Networth (SkyCrypt ile birebir ayni hesap).
-        // Sadece ana (en son oynanan) profil icin hesaplanir.
         let nwError = null;
         if (summaries.length > 0) {
             const mp = profiles.find(p => p.profile_id === summaries[0].profile_id);
@@ -376,7 +358,6 @@ export const handler = async (event) => {
             try {
                 const { ProfileNetworthCalculator } = await import("skyhelper-networth");
 
-                // Museum verisi (Museum networth icin; opsiyonel ama SkyCrypt ile esleme icin onemli).
                 let museumData = null;
                 try {
                     const museumRes = await fetch(
@@ -385,7 +366,7 @@ export const handler = async (event) => {
                     );
                     const museumJson = await museumRes.json();
                     museumData = museumJson?.members?.[uuid] || null;
-                } catch (e) { /* museum yoksa atla */ }
+                } catch (e) {  }
 
                 const calc = new ProfileNetworthCalculator(mm, museumData, mp?.banking?.balance || 0);
                 const nw = await Promise.race([
@@ -400,23 +381,21 @@ export const handler = async (event) => {
                     purse: Math.floor(nw.purse || 0),
                     bank: Math.floor(nw.bank || 0),
                     pets: Math.floor(petsTotal),
-                    // "Items" = pets/purse/bank disindaki her sey (accessories, storage,
-                    // museum, sacks, essence, inventory, armor, ... hepsi dahil).
+
                     items: Math.floor((nw.networth || 0) - (nw.purse || 0) - (nw.bank || 0) - petsTotal),
-                    // Tum kategori kirilimi (client isterse tooltip'te gosterebilir).
+
                     types: Object.fromEntries(
                         Object.entries(nw.types || {}).map(([k, v]) => [k, Math.floor(v?.total || 0)])
                     )
                 };
             } catch (e) {
                 summaries[0].networth = null;
-                // Hata ayiklama: networth neden hesaplanamadi (gecici).
+
                 nwError = String(e?.stack || e?.message || e);
                 summaries[0].networth_error = nwError;
             }
         }
 
-        // Yanıt boyutunu küçült: ağır verileri sadece ana (en son) profilde tut.
         for (let i = 1; i < summaries.length; i++) {
             delete summaries[i].inventory;
             delete summaries[i].collections;
@@ -459,10 +438,6 @@ export const handler = async (event) => {
     }
 };
 
-// ===================== DYNAMODB LOG / USERS =====================
-// Her istegi DynamoDB tablosuna yazar; /users bunu ozetler.
-// Lambda env: LOG_TABLE = tablo adi. Tablo: pk (String) + ts (Number) anahtar.
-// Bir promise'i ms icinde bitmezse reddeder (DynamoDB takilmasini onler).
 function withTimeout(promise, ms, label) {
     return Promise.race([
         promise,
@@ -488,7 +463,7 @@ async function logToDynamo(requester, target) {
             ts: now,
             requester: requester || "?",
             target: target || "?",
-            // TTL: 30 gun (tabloda TTL attribute = expireAt olarak ayarla, istege bagli)
+
             expireAt: Math.floor(now / 1000) + 30 * 24 * 3600
         }
     })), 3000, "ddb-put");
@@ -517,9 +492,6 @@ async function getUsersSummary(limit) {
     return { total_requests: items.length, unique_users: users.length, users, recent };
 }
 
-// ===================== DISCORD WEBHOOK LOG =====================
-// Her /pve istegini bir Discord kanalina yazar: kim, kimi, ne zaman.
-// Webhook URL'si Lambda env: DISCORD_WEBHOOK_URL
 async function logToDiscord(requester, target) {
     const url = process.env.DISCORD_WEBHOOK_URL;
     if (!url) return;
@@ -546,7 +518,7 @@ async function logToDiscord(requester, target) {
             signal: ctrl.signal
         });
     } catch (e) {
-        // webhook hatasi profili etkilemesin
+
     } finally {
         clearTimeout(tm);
     }
