@@ -1,7 +1,7 @@
 package com.eggman.pv.util;
 
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -11,7 +11,7 @@ import java.util.Map;
 public class CollectionIcon {
 
 	private static final int TEX = 64;
-	private static final Map<String, ResourceLocation> ICONS = new HashMap<>();
+	private static final Map<String, Identifier> ICONS = new HashMap<>();
 
 	private static void put(String id, String file) {
 		ICONS.put(id, PvRender.tex("collection/" + file + ".png"));
@@ -59,7 +59,7 @@ public class CollectionIcon {
 	}
 
 	public static void draw(GuiGraphics g, String id, int x, int y) {
-		ResourceLocation tex = ICONS.get(id);
+		Identifier tex = ICONS.get(id);
 		if (tex != null) {
 			PvRender.drawTexturedRect(g, tex, x, y, 16, 16, 0f, 0f, TEX, TEX, TEX, TEX);
 			return;

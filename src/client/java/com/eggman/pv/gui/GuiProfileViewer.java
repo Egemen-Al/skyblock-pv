@@ -13,7 +13,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 
@@ -22,7 +22,7 @@ public class GuiProfileViewer extends Screen {
 	public static final int SIZE_X = 431;
 	public static final int SIZE_Y = 202;
 
-	private static final ResourceLocation PV_BG = PvRender.tex("pv_bg.png");
+	private static final Identifier PV_BG = PvRender.tex("pv_bg.png");
 
 	private final String username;
 
@@ -385,7 +385,7 @@ public class GuiProfileViewer extends Screen {
 			int by = my + 22 + i * 18;
 			String tier = (dungeonMasterMode ? "M" : "F") + (i + 1);
 
-			net.minecraft.resources.ResourceLocation head = com.eggman.pv.util.BossHeads.getFloor(i + 1);
+			net.minecraft.resources.Identifier head = com.eggman.pv.util.BossHeads.getFloor(i + 1);
 			if (head != null) {
 				try {
 					PvRender.drawTexturedRect(g, head, mx + 6, by - 2, 12, 12, 12, 12);
@@ -1097,7 +1097,7 @@ public class GuiProfileViewer extends Screen {
 			else if (m.item != null && !m.item.isEmpty()) {
 
 				net.minecraft.world.item.Item bItem = net.minecraft.core.registries.BuiltInRegistries.ITEM
-						.getValue(net.minecraft.resources.ResourceLocation.withDefaultNamespace(m.item));
+						.getValue(net.minecraft.resources.Identifier.withDefaultNamespace(m.item));
 				g.renderItem(new ItemStack(bItem), x, y);
 			} else g.renderItem(new ItemStack(Items.PAPER), x, y);
 			PvRender.drawStringCentered(g, tier > 0 ? String.valueOf(tier) : "", x + 8, y + 17, true, maxed ? 0xFFD700 : 0xFFFFFF);
@@ -1762,7 +1762,7 @@ public class GuiProfileViewer extends Screen {
 		}
 	}
 
-	private static final ResourceLocation PANORAMA = PvRender.tex("panorama.png");
+	private static final Identifier PANORAMA = PvRender.tex("panorama.png");
 	private static final int PANO_W = 512, PANO_H = 288;
 
 	private void drawPanoramaBg(GuiGraphics g, int x1, int y1, int x2, int y2) {
@@ -2301,7 +2301,7 @@ public class GuiProfileViewer extends Screen {
 			case "island": file = "island"; break;
 			default: file = "normal"; break;
 		}
-		ResourceLocation icon = PvRender.tex("profile/" + file + ".png");
+		Identifier icon = PvRender.tex("profile/" + file + ".png");
 		try {
 			PvRender.drawTexturedRect(g, icon, x, y, 12, 12, 12, 12);
 		} catch (Throwable t) {

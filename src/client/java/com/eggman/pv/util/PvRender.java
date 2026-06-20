@@ -8,23 +8,23 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderPipelines;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import com.eggman.pv.SkyblockPvClient;
 
 public class PvRender {
 
-	public static ResourceLocation tex(String name) {
-		return ResourceLocation.fromNamespaceAndPath(SkyblockPvClient.MOD_ID, "textures/gui/" + name);
+	public static Identifier tex(String name) {
+		return Identifier.fromNamespaceAndPath(SkyblockPvClient.MOD_ID, "textures/gui/" + name);
 	}
 
-	public static void drawTexturedRect(GuiGraphics g, ResourceLocation texture,
+	public static void drawTexturedRect(GuiGraphics g, Identifier texture,
 	                                    int x, int y, int width, int height,
 	                                    int texW, int texH) {
 		g.blit(RenderPipelines.GUI_TEXTURED, texture, x, y, 0f, 0f, width, height, texW, texH);
 	}
 
-	public static void drawTexturedRect(GuiGraphics g, ResourceLocation texture,
+	public static void drawTexturedRect(GuiGraphics g, Identifier texture,
 	                                    int x, int y, int width, int height,
 	                                    float u, float v, int regionW, int regionH,
 	                                    int texW, int texH) {

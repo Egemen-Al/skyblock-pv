@@ -1,10 +1,10 @@
 package com.eggman.pv.util;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class BossHeads {
 
-	private static final ResourceLocation[] FLOORS = {
+	private static final Identifier[] FLOORS = {
 			PvRender.tex("profile/boss/bonzo.png"),
 			PvRender.tex("profile/boss/scarf.png"),
 			PvRender.tex("profile/boss/professor.png"),
@@ -14,36 +14,36 @@ public class BossHeads {
 			PvRender.tex("profile/boss/necron.png")
 	};
 
-	public static ResourceLocation getFloor(int floor) {
+	public static Identifier getFloor(int floor) {
 		if (floor < 1 || floor > 7) return null;
 		return FLOORS[floor - 1];
 	}
 
-	public static ResourceLocation getBonzo() {
+	public static Identifier getBonzo() {
 		return FLOORS[0];
 	}
 
-	public static ResourceLocation getScarf() {
+	public static Identifier getScarf() {
 		return FLOORS[1];
 	}
 
-	public static ResourceLocation getProfessor() {
+	public static Identifier getProfessor() {
 		return FLOORS[2];
 	}
 
-	public static ResourceLocation getThorn() {
+	public static Identifier getThorn() {
 		return FLOORS[3];
 	}
 
-	public static ResourceLocation getLivid() {
+	public static Identifier getLivid() {
 		return FLOORS[4];
 	}
 
-	public static ResourceLocation getSadan() {
+	public static Identifier getSadan() {
 		return FLOORS[5];
 	}
 
-	public static ResourceLocation getNecron() {
+	public static Identifier getNecron() {
 		return FLOORS[6];
 	}
 }
