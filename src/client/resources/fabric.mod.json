@@ -3,7 +3,7 @@
 	"id": "skyblockpv",
 	"version": "${version}",
 	"name": "Skyblock ProfileViewer",
-	"description": "A standalone port of NotEnoughUpdates' ProfileViewer GUI for Minecraft 1.21.10. Based on NotEnoughUpdates (LGPL-3.0).",
+	"description": "A standalone port of NotEnoughUpdates' ProfileViewer GUI for Minecraft 1.21.11. Based on NotEnoughUpdates (LGPL-3.0).",
 	"authors": [
 		"Port author",
 		"NotEnoughUpdates contributors (original)"
@@ -19,7 +19,7 @@
 	},
 	"depends": {
 		"fabricloader": ">=0.18.0",
-		"minecraft": "~1.21.10",
+		"minecraft": "~1.21.11",
 		"java": ">=21",
 		"fabric-api": "*"
 	}

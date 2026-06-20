@@ -1,6 +1,6 @@
-# Skyblock ProfileViewer (Fabric 1.21.10)
+# Skyblock ProfileViewer (Fabric 1.21.11)
 
-A **Fabric 1.21.10** port of NotEnoughUpdates' ProfileViewer GUI, backed by an **AWS Lambda** service.
+A **Fabric 1.21.11** port of NotEnoughUpdates' ProfileViewer GUI, backed by an **AWS Lambda** service.
 Use `/pve <name>` in-game to view any Hypixel SkyBlock player's profile.
 
 ## Features
